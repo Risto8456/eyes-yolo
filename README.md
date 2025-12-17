@@ -2,20 +2,46 @@
 
 本專案使用 **YOLOv11** 訓練眼睛（eye）與瞳孔（pupil）偵測模型，並支援 TensorRT 匯出與即時攝影機測試。
 
----
+# 一、 TensorRT 環境與設備簡易說明
 
-## 目錄
-
-1. 原始資料集結構
-2. 更新後資料集結構
-3. eyes.yaml 設定
-4. 模型訓練
-   5.（補充）tmux 常用指令
-5. 匯出 TensorRT
-6. 影片測試
-7. 攝影機即時測試
+本專案使用 **Ultralytics YOLO11 + TensorRT + 攝影機即時推論**，目標平台為 **NVIDIA Jetson Orin Nano（JetPack 6.x）**，用於高效能、低延遲的即時視線偵測。
 
 ---
+
+## 整體架構說明
+
+```
+攝影機
+  ↓
+YOLO11 (Ultralytics)
+  ↓  PyTorch (訓練 / 測試)
+TensorRT (Engine / trtexec)
+  ↓
+Jetson Orin Nano GPU (CUDA)
+```
+
+* **YOLO11**：負責物件偵測（eye / pupil）
+* **PyTorch**：模型訓練與開發階段推論
+* **TensorRT**：將模型轉為高效能 Engine，加速推論
+* **Jetson Orin Nano**：邊緣運算裝置，負責即時推論
+
+---
+
+## 前置條件（系統層）
+
+Jetson Orin Nano 已完成 **JetPack 6.x** 安裝，系統內已包含：
+
+* CUDA（GPU 運算）
+* cuDNN（深度學習加速）
+* TensorRT 10.3（推論最佳化）
+
+這些元件都屬於 **系統層套件**，安裝在 `/usr/lib/...`，不是 Python venv 的一部分。
+
+
+# 二、資料集
+
+
+# 三、訓練
 
 ## 1. 原始資料集結構
 

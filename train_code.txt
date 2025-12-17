@@ -1,0 +1,104 @@
+# 0. 原資料集結構
+解壓縮
+37600 組照片與標註
+```
+boundingBox_jpg
+├── images/        原始圖片 (.jpg)
+└── labels/        標註檔案 (.txt)
+```
+
+# 1. 更新資料集結構
+用 split_train_val.py 以 9 : 1 分配訓練集與驗證集：
+```
+boundingBox_jpg/
+├── images/
+│   ├── train/
+│   └── val/
+├── labels/
+│     ├── train/
+│     └── val/
+├── split_train_val.py
+└── eyes.yaml
+```
+
+# 2. eyes.yaml 設定
+```
+path: /home/jetbot/final/boundingBox_jpg
+
+train: images/train
+val: images/val
+
+names:
+  0: eye
+  1: pupil
+```
+
+# 3. 訓練
+## 舊版太慢，一輪半小時，100 輪 50 小時
+```
+workon pt
+cd /home/jetbot/final/boundingBox_jpg
+yolo train \
+  model=yolo11n.pt \
+  data=eyes.yaml \
+  epochs=100 \
+  imgsz=640 \
+  batch=4 \
+  workers=1 \
+  device=0 \
+  amp=False \
+  freeze=10 \
+  cache=False
+
+```
+
+
+## 新版，預計快 5 倍
+```
+yolo train \
+  model=yolo11n.pt \
+  data=eyes.yaml \
+  epochs=50 \
+  patience=5 \
+  imgsz=512 \
+  batch=4 \
+  workers=1 \
+  device=0 \
+  amp=False \
+  freeze=15 \
+  cache=False
+
+```
+
+## 接續被臨時終止的訓練
+```
+yolo train \
+  model=runs/detect/train3/weights/last.pt \
+  data=eyes.yaml \
+  resume=True
+```
+
+# 3.5 補充 - tmux 指令
+tmux attach -t yolo_train
+```
+動作	        指令
+開一個 session  tmux new -s 名稱
+離開不中斷	Ctrl+B → D
+列出 session	tmux ls
+回到 session	tmux attach -t 名稱
+刪除 session    tmux kill-session -t 名稱
+```
+
+# 4. 匯出 TensorRT
+"/home/jetbot/final/boundingBox_jpg/runs/detect/train3/weights/best.pt"
+```
+workon pt
+cd /home/jetbot/final/boundingBox_jpg/runs/detect/train3/weights
+yolo export \
+  model=best.pt \
+  format=engine \
+  imgsz=512 \
+  batch=1 \
+  half=True \
+  device=0
+```

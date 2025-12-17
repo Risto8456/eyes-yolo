@@ -5,6 +5,7 @@
 # 一、 TensorRT 環境與設備簡易說明
 
 本專案使用 **Ultralytics YOLO11 + TensorRT + 攝影機即時推論**，目標平台為 **NVIDIA Jetson Orin Nano（JetPack 6.x）**，用於高效能、低延遲的即時視線偵測。
+詳情請看[助教筆記](https://www.notion.so/Tensor-RT-2c47565897c380bda50ce5e9f802e344)
 
 ---
 
@@ -40,6 +41,8 @@ Jetson Orin Nano 已完成 **JetPack 6.x** 安裝，系統內已包含：
 
 # 二、資料集
 
+使用 TEyeD，取出上下眼臉以及角膜標註
+整理好的[下載點](https://drive.google.com/file/d/1kzJcurXgB1VP29pMtYsCd08bD-SDaZ1-/view)
 
 # 三、訓練
 
